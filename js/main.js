@@ -58,58 +58,18 @@ const posts = [
 
 //variabili di cui ho bisogno
 const postList = document.querySelector('.posts-list');
-const likeButton = document.getElementsByClassName('js-like-button');
-const liked = [];
-let initials;
 
 //modificare data in formato europeo
 convertDate();
+
+//check profile pic
+checkProfilePic();
 
 //creare posts in pagina
 postCreation();
 
 //like//unlike
 checkLike();
-
-//profile pic
-function controllImgUser(){
-    initials = post.author.name.split(' ').map(word => word[0]).toString().replace(",","");
-    
-    const profilePic = document.querySelector('.profile-pic');
-    const span = document.createElement("span");
-    span.className = 'profile-pic-default';
-    span.innerHTML += `${initials}`;
-    profilePic.replaceWith(span);
-}
-
-
-
-//like post
-const likeCounters = document.getElementsByClassName('js-likes-counter');
-const likeButtons=document.getElementsByClassName('js-like-button');
-let likedPosts = [];
-
-//like/unlike post
-// for(let i=0; i<likeButtons.length; i++){
-//     likeButtons[i].addEventListener('click', function(){
-
-//         if(!(likedPosts.includes(posts[i].id)))
-//         {
-//             likeButtons[i].classList.add('like-button--liked');
-//             likedPosts.push(posts[i].id);
-//             posts[i].likes +=1;
-//             likeCounters[i].innerHTML=posts[i].likes;
-//         }else
-//         {
-//             likeButtons[i].classList.remove('like-button--liked');
-//             posts[i].likes -=1;
-//             likeCounters[i].innerHTML=posts[i].likes;
-//             let postIndexInLikedArr = likedPosts.indexOf((posts[i].id));
-//             likedPosts.splice(postIndexInLikedArr,1);
-//         }
-        
-//     })
-// }
 
 //genero template html per ogni post
 function postCreation(){
@@ -120,7 +80,7 @@ function postCreation(){
             <div class="post__header">
                 <div class="post-meta">                    
                     <div class="post-meta__icon">
-                        <img class="profile-pic" src="${post.author.image}" alt="${post.author.name}">                    
+                        <img class="profile-pic" src="${post.author.image}" alt="${post.author.image}" >                    
                     </div>
                     <div class="post-meta__data">
                         <div class="post-meta__author">${post.author.name}</div>
@@ -162,11 +122,6 @@ function convertDate(){
     })
 }
 
-function checkProfilePic(author){
-    const nameString = author.name.split(' ')[0][0] + author.name.split(' ')[1][0];
-    return nameString;
-}
-
 function checkLike(){
     document.querySelectorAll('.js-like-button').forEach(button => {
         button.addEventListener('click', function(addLike) {
@@ -182,4 +137,12 @@ function checkLike(){
             }
         });
     });
+}
+
+function checkProfilePic(){
+    posts.forEach(pic => {
+        if(pic.author.image === null){
+            pic.author.image = pic.author.name.replace(/[a-z]/g, '');
+        }
+    })
 }
