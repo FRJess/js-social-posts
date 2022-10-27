@@ -57,10 +57,24 @@ const posts = [
 ];
 
 //variabili di cui ho bisogno
-const postList = document.getElementById('container');
+const postList = document.querySelector('.posts-list');
+const likeButton = document.getElementsByClassName('js-like-button');
+const liked = [];
+// console.log("e passato", likes);
 
 //creare posts in pagina
 postCreation();
+
+//like add to post
+document.querySelectorAll('.js-like-button').forEach(button => {
+    button.addEventListener('click', function(likeAdd){
+        likeAdd.preventDefault();
+        let idPost = this.getAttribute('data-postid');
+        const post = posts.filter(post => post.id == idPost)[0];
+        button.closest('.js-likes').querySelector('.js-likes-counter').innerText = ++post.likes;
+        button.classList.add('like-button--liked');
+    });
+});
 
 
 //genero template html per ogni post
@@ -72,7 +86,7 @@ function postCreation(){
             <div class="post__header">
                 <div class="post-meta">                    
                     <div class="post-meta__icon">
-                        <img class="profile-pic" src="${post.author.image}" alt="${post.author.name}">                    
+                        <img class="profile-pic" src="${post.author.image}" alt="${post.author}">                    
                     </div>
                     <div class="post-meta__data">
                         <div class="post-meta__author">${post.author.name}</div>
@@ -102,6 +116,4 @@ function postCreation(){
     })
     postList.innerHTML = content;
 
-}
-
-// postList.innerHTML = postHtml;
+};
