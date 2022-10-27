@@ -56,33 +56,52 @@ const posts = [
     }
 ];
 
-//const di cui ho bisogno
+//variabili di cui ho bisogno
+const postList = document.getElementById('container');
 
-const postList = document.querySelector('.post-list')
+//creare posts in pagina
+postCreation();
 
-//creare pagina da stampare
-socialposts();
 
-function socialposts(){
-
-    postList.innerHTML = '';
-    posts.forEach((post) => postCreation(post));
-
-};
-
-//aggiungere ogni post alla pagina
-function postCreation(post){
-    const id = post.id;
-    const content = post.content;
-    const image = post.media;
-    const authorName = post.author.name;
-    const authorimage = post.author.image;
-    const likes = post.likes;
-    const date = post.created;
-
-        postList += '
-        
-        
-        '
+//genero template html per ogni post
+function postCreation(){
+    let content = '';
+    posts.forEach(post =>{
+        content +=`
+        <div class="post">
+            <div class="post__header">
+                <div class="post-meta">                    
+                    <div class="post-meta__icon">
+                        <img class="profile-pic" src="${post.author.image}" alt="${post.author.name}">                    
+                    </div>
+                    <div class="post-meta__data">
+                        <div class="post-meta__author">${post.author.name}</div>
+                        <div class="post-meta__time">${post.created}</div>
+                    </div>                    
+                </div>
+            </div>
+            <div class="post__text">${post.content}</div>
+            <div class="post__image">
+                <img src="${post.media}" alt="${post.media}">
+            </div>
+            <div class="post__footer">
+                <div class="likes js-likes">
+                    <div class="likes__cta">
+                        <a class="like-button  js-like-button" href="#" data-postid="${post.id}">
+                            <i class="like-button__icon fas fa-thumbs-up" aria-hidden="true"></i>
+                            <span class="like-button__label">Mi Piace</span>
+                        </a>
+                    </div>
+                    <div class="likes__counter">
+                        Piace a <b id="like-counter-1" class="js-likes-counter">${post.likes}</b> persone
+                    </div>
+                </div> 
+            </div>            
+         </div>
+    `;
+    })
+    postList.innerHTML = content;
 
 }
+
+// postList.innerHTML = postHtml;
