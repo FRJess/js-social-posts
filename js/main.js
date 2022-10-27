@@ -64,21 +64,38 @@ const liked = [];
 //modificare data in formato europeo
 convertDate();
 
+//check se immagine profilo presente
+checkProfilePic();
 
 //creare posts in pagina
 postCreation();
 
-//like add to post
-document.querySelectorAll('.js-like-button').forEach(button => {
-    button.addEventListener('click', function(likeAdd){
-        likeAdd.preventDefault();
-        let idPost = this.getAttribute('data-postid');
-        const post = posts.filter(post => post.id == idPost)[0];
-        button.closest('.js-likes').querySelector('.js-likes-counter').innerText = ++post.likes;
-        button.classList.add('like-button--liked');
-    });
-});
+//like post
+const likeCounters = document.getElementsByClassName('js-likes-counter');
+const likeButtons=document.getElementsByClassName('js-like-button');
+let likedPosts = [];
 
+//like/unlike post
+for(let i=0; i<likeButtons.length; i++){
+    likeButtons[i].addEventListener('click', function(){
+
+        if(!(likedPosts.includes(posts[i].id)))
+        {
+            likeButtons[i].classList.add('like-button--liked');
+            likedPosts.push(posts[i].id);
+            posts[i].likes +=1;
+            likeCounters[i].innerHTML=posts[i].likes;
+        }else
+        {
+            likeButtons[i].classList.remove('like-button--liked');
+            posts[i].likes -=1;
+            likeCounters[i].innerHTML=posts[i].likes;
+            let postIndexInLikedArr = likedPosts.indexOf((posts[i].id));
+            likedPosts.splice(postIndexInLikedArr,1);
+        }
+        
+    })
+}
 
 //genero template html per ogni post
 function postCreation(){
@@ -131,3 +148,11 @@ function convertDate(){
     })
 }
 
+function checkProfilePic(){
+    posts.forEach(pic => {
+        if(pic.author.image === null){
+            pic.author.image = pic.author.name.replace(/[a-z]/g, '');
+            console.log(pic.author.image);
+        }
+    })
+}
