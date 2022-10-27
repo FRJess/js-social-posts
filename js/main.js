@@ -60,7 +60,10 @@ const posts = [
 const postList = document.querySelector('.posts-list');
 const likeButton = document.getElementsByClassName('js-like-button');
 const liked = [];
-// console.log("e passato", likes);
+
+//modificare data in formato europeo
+convertDate();
+
 
 //creare posts in pagina
 postCreation();
@@ -117,3 +120,14 @@ function postCreation(){
     postList.innerHTML = content;
 
 };
+
+//convert data European format
+function convertDate(){
+    posts.forEach(post => {
+        //transform string to date
+        date = new Date(post.created);
+        //convert date format
+        post.created = Intl.DateTimeFormat("it-IT").format(date);
+    })
+}
+
