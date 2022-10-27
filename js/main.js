@@ -1,3 +1,4 @@
+// DATABASE
 const posts = [
     {
         "id": 1,
@@ -56,22 +57,27 @@ const posts = [
     }
 ];
 
-//variabili di cui ho bisogno
+// VARIABLES DECLARATION AND INIZIALIZATION
+
 const postList = document.querySelector('.posts-list');
 
-//modificare data in formato europeo
+// FUNCTIONS CALLS
+
+//change date to european format
 convertDate();
 
 //check profile pic
 checkProfilePic();
 
-//creare posts in pagina
+//create posts
 postCreation();
 
 //like//unlike
 checkLike();
 
-//genero template html per ogni post
+// FUNCTIONS DECLARATION
+
+//template generator to print on page
 function postCreation(){
     let content = '';
     posts.forEach(post =>{
@@ -122,6 +128,7 @@ function convertDate(){
     })
 }
 
+//like/unlike button
 function checkLike(){
     document.querySelectorAll('.js-like-button').forEach(button => {
         button.addEventListener('click', function(addLike) {
@@ -139,6 +146,7 @@ function checkLike(){
     });
 }
 
+//check profile pic presence
 function checkProfilePic(){
     posts.forEach(pic => {
         if(pic.author.image === null){
