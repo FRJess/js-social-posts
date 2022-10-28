@@ -59,98 +59,123 @@ const posts = [
 
 // VARIABLES DECLARATION AND INIZIALIZATION
 
+const userLikes = [];
 const postList = document.querySelector('.posts-list');
+postList.innerHTML = '';
+
 
 // FUNCTIONS CALLS
 
 //change date to european format
 convertDate();
 
-//check profile pic
-checkProfilePic();
+//like/unlike button
+function checkLike(id){
+    return userLikes.includes(id);
+};
 
-//create posts
-postCreation();
-
-//like//unlike
-checkLike();
 
 // FUNCTIONS DECLARATION
 
+//page creation
+posts.forEach( post => {
+    postList.innerHTML += postCreation(post);
+});
+
 //template generator to print on page
-function postCreation(){
-    let content = '';
-    posts.forEach(post =>{
-        content +=`
+function postCreation(post){
+    const {id, author, content, media, likes, created} = post;
+
+    return `
         <div class="post">
             <div class="post__header">
                 <div class="post-meta">                    
                     <div class="post-meta__icon">
-                        <img class="profile-pic" src="${post.author.image}" alt="${post.author.image}" >                    
+                       ${author.image ? getProfilePic(author) : getProfileDefault(author)}     
                     </div>
                     <div class="post-meta__data">
-                        <div class="post-meta__author">${post.author.name}</div>
-                        <div class="post-meta__time">${post.created}</div>
+                        <div class="post-meta__author">${author.name}</div>
+                        <div class="post-meta__time">${created}</div>
                     </div>                    
                 </div>
             </div>
-            <div class="post__text">${post.content}</div>
+            <div class="post__text">${content}</div>
             <div class="post__image">
-                <img src="${post.media}" alt="${post.media}">
+                <img src="${media}" alt="${author}">
             </div>
             <div class="post__footer">
                 <div class="likes js-likes">
                     <div class="likes__cta">
-                        <a class="like-button  js-like-button" href="#" data-postid="${post.id}">
+                        <a class="like-button  js-like-button ${checkLike(id) ? 'like-button--liked' : ''}" href="#" data-postid="${id}">
                             <i class="like-button__icon fas fa-thumbs-up" aria-hidden="true"></i>
                             <span class="like-button__label">Mi Piace</span>
                         </a>
                     </div>
                     <div class="likes__counter">
-                        Piace a <b id="like-counter-1" class="js-likes-counter">${post.likes}</b> persone
+                        Piace a <b id="like-counter-${id}" class="js-likes-counter">${likes}</b> persone
                     </div>
                 </div> 
             </div>            
          </div>
     `;
-    })
-    postList.innerHTML = content;
+    // postList.innerHTML = content;
 
 };
+
+//like button and counter modification
+const likesButtons = document.querySelectorAll('.like-button');
+
+//action on like button
+likesButtons.forEach(likeButton => {
+    likeButton.addEventListener('click', function(event){
+        //turn off tag link href
+        event.preventDefault();
+        //check post id and take it
+        const postId = parseInt(this.getAttribute('data-postid'));
+        const counterLikes = document.getElementById('like-counter-' + postId);
+        let likes = parseInt(counterLikes.innerText);
+
+        //turn of in on and opposite
+        if(this.classList.contains('like-button--liked')){
+            this.classList.remove('like-button--liked');
+            counterLikes.innerText = --likes;
+        }else{
+            this.classList.add('like-button--liked');
+            counterLikes.innerText = ++likes;
+        }
+
+        const likedPost = posts.filter((post) => post.id == postId)
+        likedPost[0].likes = likes;
+    })
+})
 
 //convert data European format
 function convertDate(){
     posts.forEach(post => {
         //transform string to date
         date = new Date(post.created);
-        //convert date format
+        //convert date to european format
         post.created = Intl.DateTimeFormat("it-IT").format(date);
     })
-}
-
-//like/unlike button
-function checkLike(){
-    document.querySelectorAll('.js-like-button').forEach(button => {
-        button.addEventListener('click', function(addLike) {
-            addLike.preventDefault();
-            let idPost = this.getAttribute('data-postid');             
-            const singlePost = posts.filter(post => post.id == idPost)[0];
-            if(button.classList.contains('like-button--liked')){
-                button.closest('.js-likes').querySelector('.js-likes-counter').innerText = --singlePost.likes;
-                button.classList.remove('like-button--liked');
-            }else{
-                button.closest('.js-likes').querySelector('.js-likes-counter').innerText = ++singlePost.likes;
-                button.classList.add('like-button--liked');
-            }
-        });
-    });
-}
+};
 
 //check profile pic presence
-function checkProfilePic(){
-    posts.forEach(pic => {
-        if(pic.author.image === null){
-            pic.author.image = pic.author.name.replace(/[a-z]/g, '');
-        }
+function getProfilePic(author){
+    const {image, name} = author;
+    return `<img class="profile-pic" src="${image}" alt="${name}">`
+};
+//take name initials
+function getProfileDefault(author){
+    const {name} = author;
+    let initials = '';
+    const nameParts = name.split(' ');
+    nameParts.forEach(part => {
+        initials += part[0];
+
     })
-}
+    //replace with initials if not present
+    return `<div class="profile-pic-default">
+    <span>${initials}</span>
+    </div>
+    `
+};
